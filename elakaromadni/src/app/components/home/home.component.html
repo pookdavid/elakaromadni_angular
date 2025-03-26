@@ -1,0 +1,19 @@
+<section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Használtautók Magyarországon</h1>
+      <p class="hero-subtitle">Találd meg álmaid autóját vagy add el a tiedat</p>
+      <button mat-raised-button 
+              color="primary" 
+              class="cta-button"
+              routerLink="/ads">
+        Böngészés most
+      </button>
+    </div>
+  </section>
+  
+  <section class="featured-section">
+    <h2 class="section-title">Kiemelt hirdetések</h2>
+    <div class="car-grid">
+      <app-car-card *ngFor="let car of featuredCars" [car]="car"></app-car-card>
+    </div>
+  </section>

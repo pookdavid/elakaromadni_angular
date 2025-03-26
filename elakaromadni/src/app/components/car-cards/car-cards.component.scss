@@ -1,0 +1,62 @@
+.car-card {
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+  
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+  
+    .image-container {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+      padding-bottom: 10px;
+  
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+  
+      .price-tag {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-weight: 500;
+      }
+    }
+  
+    .car-title {
+      margin: 1rem 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #333;
+    }
+  
+    .specs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+  
+      .spec-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+  
+        mat-icon {
+          color: #ff6600;
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }

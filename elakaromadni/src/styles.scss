@@ -1,0 +1,88 @@
+
+.image-preview-container {
+    transition: all 0.3s ease;
+  }
+  
+  .image-preview-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .remove-image-btn {
+    transition: opacity 0.2s ease;
+    opacity: 0.7;
+  }
+  
+  .remove-image-btn:hover {
+    opacity: 1;
+  }
+
+
+$primary: #ff6600;
+$secondary: #2c3e50;
+$background: #f5f6fa;
+$text: #2c3e50;
+$error: #e74c3c;
+
+$spacer: 1rem;
+$border-radius: 8px;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  --header-height: 80px;
+  --sidebar-width: 280px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: $background;
+  color: $text;
+  line-height: 1.6;
+}
+
+.button-primary {
+  background: $primary;
+  color: white;
+  padding: 12px 24px;
+  border-radius: $border-radius;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: darken($primary, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+.form-group {
+  margin-bottom: $spacer * 1.5;
+  
+  label {
+    display: block;
+    margin-bottom: $spacer * 0.5;
+    font-weight: 500;
+  }
+}
+
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 1024px;
+
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}

@@ -1,0 +1,22 @@
+<mat-toolbar color="primary" class="header-container">
+  <div class="brand-container" routerLink="/">
+    <img src="assets/images/logo.png" alt="Elakaromadni Logo" class="logo">
+    <span class="brand-text">Elakaromadni.hu</span>
+  </div>
+
+  <nav class="desktop-nav">
+    <a mat-button routerLink="/ads" routerLinkActive="active">Hirdetések</a>
+    <a mat-button routerLink="/add-ad" routerLinkActive="active">Hirdetésfeladás</a>
+    <a mat-button routerLink="/profile" routerLinkActive="active">Profil</a>
+  </nav>
+
+  <button mat-icon-button class="mobile-menu" (click)="toggleMenu()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <nav class="mobile-nav" [class.active]="isMobileMenuOpen">
+    <a mat-button routerLink="/ads" (click)="toggleMenu()">Hirdetések</a>
+    <a mat-button routerLink="/add-ad" (click)="toggleMenu()">Hirdetésfeladás</a>
+    <a mat-button routerLink="/profile" (click)="toggleMenu()">Profil</a>
+  </nav>
+</mat-toolbar>
