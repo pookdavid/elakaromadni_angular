@@ -21,6 +21,8 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'add-ad', component: AddAdComponent },
   { path: 'cars/:id', component: CarDetailsComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegistrationComponent },
   
   { path: '**', redirectTo: '' }
 ];
