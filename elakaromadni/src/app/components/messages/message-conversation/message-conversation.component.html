@@ -1,0 +1,29 @@
+<div class="conversation-container">
+  <div class="message-header">
+    <button mat-icon-button routerLink="/messages">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2>Beszélgetés</h2>
+  </div>
+
+  <div class="messages">
+    <div *ngFor="let message of messages" 
+         class="message"
+         [class.sent]="message.sender_id === currentUserId"
+         [class.received]="message.sender_id !== currentUserId">
+      <div class="message-content">
+        <p>{{ message.content }}</p>
+        <small>{{ message.created_at | date:'shortTime' }}</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-input">
+    <mat-form-field appearance="outline" class="full-width">
+      <textarea matInput [(ngModel)]="newMessage" placeholder="Írja be üzenetét..."></textarea>
+    </mat-form-field>
+    <button mat-icon-button color="primary" (click)="sendMessage()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>

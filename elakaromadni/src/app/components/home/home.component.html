@@ -1,19 +1,122 @@
-<section class="hero-section">
-    <div class="hero-content">
-      <h1 class="hero-title">Használtautók Magyarországon</h1>
-      <p class="hero-subtitle">Találd meg álmaid autóját vagy add el a tiedat</p>
-      <button mat-raised-button 
-              color="primary" 
-              class="cta-button"
-              routerLink="/ads">
-        Böngészés most
+<div class="home-container">
+  <header class="header">
+    <div class="logo">Autókereskedés</div>
+    <div class="search-bar">
+      <mat-form-field appearance="outline">
+        <input matInput placeholder="Keress valamire...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+    <nav class="nav-links">
+      <a mat-button routerLink="/">Főoldal</a>
+      <a mat-button routerLink="/ads">Hirdetések</a>
+      <a mat-button routerLink="/profile">Profil</a>
+    </nav>
+  </header>
+
+  <section class="hero-banner">
+    <h1>Találd meg álmaid autóját ma!</h1>
+    <p>Több ezer hirdetés, hitelesített eladóktól.</p>
+    <button mat-raised-button color="primary" routerLink="/ads">Hirdetések megtekintése</button>
+  </section>
+
+  <section class="featured-cars">
+    <h2>Ajánlott hirdetések</h2>
+    <div class="car-slider">
+      <button mat-icon-button class="nav-arrow left-arrow" (click)="scrollCarList(-1)">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      
+      <div class="car-list" #carList>
+        <div class="car-card" *ngFor="let car of featuredCars">
+          <img [src]="car.image" [alt]="car.model">
+          <div class="car-info">
+            <h3>{{car.make}} {{car.model}}</h3>
+            <p>{{car.year}} • {{car.mileage}} km • {{car.price}} €</p>
+            <button mat-button color="primary" routerLink="/cars/{{car.id}}">Adatok megtekintése</button>
+          </div>
+        </div>
+      </div>
+      
+      <button mat-icon-button class="nav-arrow right-arrow" (click)="scrollCarList(1)">
+        <mat-icon>chevron_right</mat-icon>
       </button>
     </div>
   </section>
-  
-  <section class="featured-section">
-    <h2 class="section-title">Kiemelt hirdetések</h2>
-    <div class="car-grid">
-      <app-car-card *ngFor="let car of featuredCars" [car]="car"></app-car-card>
+
+  <section class="categories">
+    <h2>Keresés kategória szerint</h2>
+    <div class="category-grid">
+      <div class="category-card" *ngFor="let category of categories">
+        <mat-icon>{{category.icon}}</mat-icon>
+        <h3>{{category.name}}</h3>
+      </div>
     </div>
   </section>
+
+  <section class="benefits">
+    <h2>Miért válassz minket?</h2>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <mat-icon>verified_user</mat-icon>
+        <h3>Hitelesített eladók</h3>
+        <p>Minden hirdetést komolyan átvizsgálunk.</p>
+      </div>
+      <div class="benefit-card">
+        <mat-icon>search</mat-icon>
+        <h3>Könnyed keresés</h3>
+        <p>Találj meg bármit amit keresel.</p>
+      </div>
+      <div class="benefit-card">
+        <mat-icon>support_agent</mat-icon>
+        <h3>24/7 segítség nyújtás</h3>
+        <p>Csapatunk itt van, hogy segíthessünk.</p>
+      </div>
+    </div>
+  </section>
+
+  <button mat-fab class="add-button" color="primary" routerLink="/add-ad">
+    <mat-icon>add</mat-icon>
+  </button>
+  
+  <button mat-fab class="chat-button" color="accent" (click)="openChat()">
+    <mat-icon>chat</mat-icon>
+  </button>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>CarMarket</h3>
+        <p>Your trusted car marketplace since 2023</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Gyors elérés</h3>
+        <a routerLink="/">Home</a>
+        <a routerLink="/ads">All Listings</a>
+        <a routerLink="/add-ad">Sell Your Car</a>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Kapcsolatunk</h3>
+        <p>{{ 'info@carmarket.com' }}</p>
+        <p>+36 123 456 789</p>
+      </div>
+      
+      <div class="footer-section socials">
+        <h3>Kövess minket</h3>
+        <div class="social-icons">
+          <a href="#"><mat-icon>facebook</mat-icon></a>
+          <a href="#"><mat-icon>instagram</mat-icon></a>
+          <a href="#"><mat-icon>twitter</mat-icon></a>
+        </div>
+      </div>
+    </div>
+
+    <app-message-bubble></app-message-bubble>
+    
+    <div class="copyright">
+      <p>© 2023 CarMarket. All rights reserved.</p>
+    </div>
+  </footer>
+</div>

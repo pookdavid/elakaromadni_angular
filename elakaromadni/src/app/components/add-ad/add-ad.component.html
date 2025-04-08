@@ -1,69 +1,69 @@
 <div class="form-container">
-    <h2 class="form-title">Új autó hirdetése</h2>
-    
-    <form [formGroup]="carForm" (ngSubmit)="onSubmit()">
-      <div class="form-grid">
-        <div class="form-column">
-          <mat-form-field appearance="outline">
-            <mat-label>Márka</mat-label>
-            <input matInput formControlName="brand" required>
-          </mat-form-field>
+  <h2 class="form-title">Új autó hirdetése</h2>
   
-          <mat-form-field appearance="outline">
-            <mat-label>Évjárat</mat-label>
-            <input matInput type="number" formControlName="year" required>
-          </mat-form-field>
-  
-          <mat-form-field appearance="outline">
-            <mat-label>Üzemanyag típusa</mat-label>
-            <mat-select formControlName="fuelType">
-              <mat-option *ngFor="let fuel of fuelTypes" [value]="fuel">
-                {{ fuel }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-  
-        <div class="form-column">
-          <mat-form-field appearance="outline">
-            <mat-label>Modell</mat-label>
-            <input matInput formControlName="model" required>
-          </mat-form-field>
-  
-          <mat-form-field appearance="outline">
-            <mat-label>Ár (HUF)</mat-label>
-            <input matInput type="number" formControlName="price" required>
-          </mat-form-field>
-  
-          <mat-form-field appearance="outline">
-            <mat-label>Kilométeróra állás</mat-label>
-            <input matInput type="number" formControlName="mileage">
-          </mat-form-field>
-        </div>
+  <form [formGroup]="carForm" (ngSubmit)="onSubmit()">
+    <div class="form-grid">
+      <div class="form-column">
+        <mat-form-field appearance="outline">
+          <mat-label>Márka</mat-label>
+          <input matInput formControlName="brand" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Évjárat</mat-label>
+          <input matInput type="number" formControlName="year" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Üzemanyag típusa</mat-label>
+          <mat-select formControlName="fuelType">
+            <mat-option *ngFor="let fuel of fuelTypes" [value]="fuel">
+              {{ fuel }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
-  
-      <div class="image-upload-section">
-        <input type="file" multiple #fileInput hidden (change)="onFileSelect($event)">
-        <button type="button" mat-stroked-button (click)="fileInput.click()">
-          <mat-icon>upload</mat-icon>
-          Képek feltöltése
-        </button>
-        
-        <div class="image-previews">
-          <div class="image-preview" *ngFor="let preview of imagePreviews; let i = index">
-            <img [src]="preview">
-            <button mat-icon-button class="remove-btn" (click)="removeImage(i)">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-        </div>
+
+      <div class="form-column">
+        <mat-form-field appearance="outline">
+          <mat-label>Modell</mat-label>
+          <input matInput formControlName="model" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ár (HUF)</mat-label>
+          <input matInput type="number" formControlName="price" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Kilométeróra állás</mat-label>
+          <input matInput type="number" formControlName="mileage">
+        </mat-form-field>
       </div>
-  
-      <button mat-raised-button 
-              color="primary" 
-              type="submit"
-              [disabled]="!carForm.valid || !imagePreviews.length">
-        Hirdetés közzététele
+    </div>
+
+    <div class="image-upload-section">
+      <input type="file" multiple #fileInput hidden (change)="onFileSelect($event)">
+      <button type="button" mat-stroked-button (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon>
+        Képek feltöltése
       </button>
-    </form>
-  </div>
+      
+      <div class="image-previews">
+        <div class="image-preview" *ngFor="let preview of imagePreviews; let i = index">
+          <img [src]="preview">
+          <button mat-icon-button class="remove-btn" (click)="removeImage(i)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button mat-raised-button 
+            color="primary" 
+            type="submit"
+            [disabled]="!carForm.valid || !imagePreviews.length">
+      Hirdetés közzététele
+    </button>
+  </form>
+</div>

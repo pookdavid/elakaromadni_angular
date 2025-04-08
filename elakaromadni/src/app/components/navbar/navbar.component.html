@@ -1,1 +1,11 @@
-<p>navbar works!</p>
+<mat-toolbar color="primary">
+    <a mat-button routerLink="/">
+      <img src="logo.png" alt="Logo" class="h-10">
+    </a>
+    <span class="flex-grow"></span>
+    <nav class="flex gap-4">
+      <a mat-button routerLink="/ads">Hirdetések</a>
+      <a mat-button routerLink="/about">Rólunk</a>
+      <a mat-button routerLink="/messages">Üzenetek</a>
+    </nav>
+  </mat-toolbar>

@@ -1,0 +1,24 @@
+<div class="message-list-container">
+  <h2>Beszélgetéseim</h2>
+  
+  <mat-card *ngFor="let conversation of conversations" class="conversation-card">
+    <div class="conversation-header">
+      <img [src]="conversation.other_user_avatar || 'assets/default-avatar.png'" alt="Profilkép" class="avatar">
+      <div>
+        <h3>{{ conversation.other_user_name }}</h3>
+        <p>Hirdetés: {{ conversation.ad_title }}</p>
+      </div>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="conversation-preview">
+      <p>{{ conversation.last_message_content | truncate:50 }}</p>
+      <small>{{ conversation.last_message_time | date:'short' }}</small>
+    </div>
+    
+    <button mat-button color="primary" routerLink="/messages/{{conversation.other_user_id}}/{{conversation.ad_id}}">
+      Beszélgetés megnyitása
+    </button>
+  </mat-card>
+</div>

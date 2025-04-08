@@ -1,25 +1,27 @@
-<mat-toolbar color="primary" class="header-container">
-  <div class="brand-container" routerLink="/">
-    <img src="logo.png" alt="Logo" class="logo">
-    <span class="brand-text">Elakaromadni.hu</span>
-  </div>
-
-  <nav class="desktop-nav">
-    <a mat-button routerLink="/ads">Hirdetések</a>
+<header>
+  <div class="header-container">
+    <div class="logo-container">
+      <img src="logo.png" alt="elakaromadni logo" class="logo-image">
+      <a routerLink="/" class="logo-text">elakaromadni</a>
+    </div>
     
-    <ng-container *ngIf="authService.isLoggedIn$ | async; else notLoggedIn">
-      <a mat-button routerLink="/add-ad">Hirdetésfeladás</a>
-      <a mat-button routerLink="/profile">Profil</a>
-      <a mat-button (click)="logout()">Kijelentkezés</a>
-    </ng-container>
-
-    <ng-template #notLoggedIn>
-      <a mat-button routerLink="/login">Bejelentkezés</a>
-      <a mat-button routerLink="/register">Regisztráció</a>
-    </ng-template>
-  </nav>
-
-  <button mat-icon-button class="mobile-menu" (click)="toggleMenu()">
-    <mat-icon>menu</mat-icon>
-  </button>
-</mat-toolbar>
+    <nav>
+      <ng-container *ngIf="authService.isLoggedIn(); else notLoggedIn">
+        <a mat-button routerLink="/ads">Browse Cars</a>
+        <a mat-button routerLink="/add-ad">Sell Your Car</a>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item routerLink="/profile">Profile</button>
+          <button mat-menu-item (click)="onLogout()">Logout</button>
+        </mat-menu>
+      </ng-container>
+      
+      <ng-template #notLoggedIn>
+        <a mat-button routerLink="/login">Login</a>
+        <a mat-button routerLink="/register" color="primary">Register</a>
+      </ng-template>
+    </nav>
+  </div>
+</header>
