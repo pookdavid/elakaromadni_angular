@@ -1,0 +1,46 @@
+# .gitignore
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Database
+*.sql
+*.dump
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Test
+coverage/
+.nyc_output/
+
+# Build
+dist/
+build/
+public/uploads/

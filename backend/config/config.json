@@ -1,0 +1,21 @@
+
+{
+  "development": {
+    "username": "elakaromadni",      
+    "password": "El@kar0madn!2024",   
+    "database": "elakaromadni",
+    "host": "localhost",              
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "elakaromadni",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "mysql"
+  }
+}
