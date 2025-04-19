@@ -1,10 +1,11 @@
+// src/app/components/car-details/car-details.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CarService, Car } from '../../services/car.service';
+import { CarService } from '../../services/car.service';
 
 @Component({
   selector: 'app-car-details',
@@ -20,11 +21,11 @@ import { CarService, Car } from '../../services/car.service';
         </div>
         
         <mat-card-content class="mt-6">
-          <h1 class="text-3xl font-bold">{{car?.brand}} {{car?.model}}</h1>
+          <h1 class="text-3xl font-bold">{{car?.specs.brand}} {{car?.specs.model}}</h1>
           <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
               <p class="text-gray-600">Évjárat</p>
-              <p class="text-lg">{{car?.year}}</p>
+              <p class="text-lg">{{car?.specs.year}}</p>
             </div>
             <div>
               <p class="text-gray-600">Ár</p>
@@ -32,11 +33,11 @@ import { CarService, Car } from '../../services/car.service';
             </div>
             <div>
               <p class="text-gray-600">Kilométeróra állás</p>
-              <p class="text-lg">{{car?.mileage | number}} km</p>
+              <p class="text-lg">{{car?.specs.mileage | number}} km</p>
             </div>
             <div>
               <p class="text-gray-600">Üzemanyag típus</p>
-              <p class="text-lg">{{car?.fuelType || 'N/A'}}</p>
+              <p class="text-lg">{{car?.specs.fuel_type || 'N/A'}}</p>
             </div>
           </div>
           
@@ -51,7 +52,7 @@ import { CarService, Car } from '../../services/car.service';
   styles: []
 })
 export class CarDetailsComponent implements OnInit {
-  car?: Car;
+  car?: any;
 
   constructor(
     private route: ActivatedRoute,

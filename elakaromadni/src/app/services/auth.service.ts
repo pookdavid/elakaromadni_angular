@@ -1,75 +1,68 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, tap } from 'rxjs';
 
 interface AuthResponse {
-  token?: string;
-  user?: {
+  token: string;
+  user: {
     id: number;
-    name: string;
+    username: string;
     email: string;
+    role: string;
   };
 }
 
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface RegisterData {
+interface UserData {
   name: string;
   email: string;
   password: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = '/api/auth';
 
   constructor(private http: HttpClient) {}
 
-  register(userData: RegisterData): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
-      tap((response: AuthResponse) => {
-        if (response.token) {
-          localStorage.setItem('auth_token', response.token);
-        }
-      })
+  register(userData: UserData): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, {
+      username: userData.name,
+      email: userData.email,
+      password: userData.password
+    }).pipe(
+      tap(response => this.storeAuthData(response))
     );
   }
 
-  login(credentials: LoginCredentials): Observable<AuthResponse> {
+  login(credentials: { email: string; password: string }): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      tap((response: AuthResponse) => {
-        if (response.token) {
-          localStorage.setItem('auth_token', response.token);
-        }
-      })
+      tap(response => this.storeAuthData(response))
     );
+  }
+
+  private storeAuthData(response: AuthResponse): void {
+    if (response.token) {
+      localStorage.setItem('auth_token', response.token);
+      localStorage.setItem('current_user', JSON.stringify(response.user));
+    }
   }
 
   logout(): void {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('current_user');
   }
 
   isLoggedIn(): boolean {
     return !!localStorage.getItem('auth_token');
   }
 
+  getCurrentUser() {
+    const userData = localStorage.getItem('current_user') || 'null';
+    return JSON.parse(userData);
+  }
+
   getCurrentUserId(): number | null {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.userId || null;
-      } catch (e) {
-        console.error('Error decoding token:', e);
-        return null;
-      }
-    }
-    return null;
+    const user = this.getCurrentUser();
+    return user?.id || null;
   }
 }

@@ -77,11 +77,8 @@
 
   <button mat-fab class="add-button" color="primary" routerLink="/add-ad">
     <mat-icon>add</mat-icon>
-  </button>
-  
-  <button mat-fab class="chat-button" color="accent" (click)="openChat()">
-    <mat-icon>chat</mat-icon>
-  </button>
+
+  </button><app-message-bubble></app-message-bubble>
 
   <footer class="footer">
     <div class="footer-content">
@@ -99,8 +96,11 @@
       
       <div class="footer-section">
         <h3>Kapcsolatunk</h3>
-        <p>{{ 'info@carmarket.com' }}</p>
-        <p>+36 123 456 789</p>
+        <ul class="contact-info">
+          <p><mat-icon>email</mat-icon>{{ 'info@carmarket.com' }}</p>
+          <p><mat-icon>phone</mat-icon> +36 123 456 789</p>
+          <p><mat-icon>location_on</mat-icon> Pécs, Esztergár Lajos u. 6, 7633</p>
+        </ul>
       </div>
       
       <div class="footer-section socials">
@@ -113,10 +113,10 @@
       </div>
     </div>
 
-    <app-message-bubble></app-message-bubble>
+    
     
     <div class="copyright">
-      <p>© 2023 CarMarket. All rights reserved.</p>
+      <p>© 2023 Elakaromadni.hu Minden jog fenntartva.</p>
     </div>
   </footer>
 </div>

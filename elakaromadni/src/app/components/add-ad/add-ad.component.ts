@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { CarService } from '../../services/car.service';
 import { Router } from '@angular/router';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-ad',
@@ -123,6 +123,7 @@ export class AddAdComponent {
   private fb = inject(FormBuilder);
   private carService = inject(CarService);
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
 
   carForm = this.fb.group({
     brand: ['', Validators.required],
@@ -136,6 +137,7 @@ export class AddAdComponent {
 
   selectedFiles: File[] = [];
   imagePreviews: string[] = [];
+  isSubmitting = false;
 
   onFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -165,24 +167,44 @@ export class AddAdComponent {
   }
 
   onSubmit() {
-    if (this.carForm.valid && this.selectedFiles.length > 0) {
-      const formData = new FormData();
+    if (this.carForm.valid && this.selectedFiles.length > 0 && !this.isSubmitting) {
+      this.isSubmitting = true;
       
-      Object.entries(this.carForm.value).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-          formData.append(key, value.toString());
-        }
-      });
+      const formData = new FormData();
+      const carData = {
+        title: `${this.carForm.value.brand} ${this.carForm.value.model}`,
+        price: this.carForm.value.price,
+        specs: {
+          brand: this.carForm.value.brand,
+          model: this.carForm.value.model,
+          year: this.carForm.value.year,
+          mileage: this.carForm.value.mileage,
+          fuel_type: this.carForm.value.fuelType
+        },
+        description: this.carForm.value.description || ''
+      };
 
+      formData.append('data', JSON.stringify(carData));
+      
       this.selectedFiles.forEach((file, index) => {
-        formData.append(`images`, file, `image-${index}.${file.name.split('.').pop()}`);
+        formData.append('images', file, `image-${index}`);
       });
 
       this.carService.createCar(formData).subscribe({
         next: () => {
+          this.snackBar.open('Hirdetés sikeresen közzétéve!', 'Bezár', {
+            duration: 3000
+          });
           this.router.navigate(['/ads']);
         },
-        error: (err) => console.error('Hiba a hirdetés feladásakor:', err)
+        error: (err) => {
+          console.error('Hiba a hirdetés feladásakor:', err);
+          this.snackBar.open('Hiba történt a hirdetés feladása közben!', 'Bezár', {
+            duration: 5000
+          });
+          this.isSubmitting = false;
+        },
+        complete: () => this.isSubmitting = false
       });
     }
   }

@@ -6,24 +6,22 @@ import { MatIconModule } from '@angular/material/icon';
 
 export interface Car {
   id: number;
-  brand: string;
-  model: string;
-  year: number;
+  title: string;
   price: number;
-  mileage?: number;
-  fuelType: string;
   images: string[];
+  specs: {
+    brand: string;
+    model: string;
+    year: number;
+    mileage?: number;
+    fuel_type?: string;
+  };
 }
 
 @Component({
   selector: 'app-car-card',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule
-  ],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
   templateUrl: './car-card.component.html',
   styleUrls: ['./car-card.component.scss']
 })
