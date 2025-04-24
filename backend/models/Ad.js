@@ -8,10 +8,11 @@ module.exports = (sequelize) => {
       autoIncrement: true
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
       validate: {
-        notEmpty: true,
+        notNull: { msg: 'Title is required' },
+        notEmpty: { msg: 'Title cannot be empty' },
         len: [3, 255]
       }
     },
@@ -23,32 +24,37 @@ module.exports = (sequelize) => {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       validate: {
-        min: 0
+        notNull: { msg: 'Price is required' },
+        min: 0.01
       }
     },
     seller_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     },
     category_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    created_at: {
-      type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+      defaultValue: 1,
+      references: {
+        model: 'categories',
+        key: 'id'
+      }
     }
   }, {
     tableName: 'ads',
     underscored: true,
-    timestamps: false,
-    freezeTableName: true
+    indexes: [
+      {
+        name: 'unique_ad_composite',
+        unique: true,
+        fields: ['title', 'price', 'description', 'seller_id']
+      }
+    ]
   });
 
   Ad.associate = (models) => {
@@ -56,21 +62,31 @@ module.exports = (sequelize) => {
       foreignKey: 'seller_id',
       as: 'seller'
     });
-    
     Ad.belongsTo(models.Category, {
       foreignKey: 'category_id',
       as: 'category'
     });
-    
     Ad.hasOne(models.CarSpec, {
       foreignKey: 'ad_id',
       as: 'specs'
     });
-    
     Ad.belongsToMany(models.Tag, {
-      through: 'ad_tags',
+      through: models.AdTag,
       foreignKey: 'ad_id',
+      otherKey: 'tag_id',
       as: 'tags'
+    });
+    Ad.hasMany(models.Review, {
+      foreignKey: 'ad_id',
+      as: 'reviews'
+    });
+    Ad.hasMany(models.Message, {
+      foreignKey: 'ad_id',
+      as: 'messages'
+    });
+    Ad.hasMany(models.SavedAd,{
+      foreignKey: 'ad_id',
+      as: 'saved_ads'
     });
   };
 

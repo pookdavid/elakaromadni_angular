@@ -1,3 +1,4 @@
+//Payment.js
 module.exports = (sequelize, DataTypes) => {
     const Payment = sequelize.define('Payment', {
       amount: {
@@ -15,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
       tableName: 'payments',
       underscored: true,
-      timestamps: false 
+      timestamps: false  // Using payment_date instead of default timestamps
     });
   
     Payment.associate = (models) => {

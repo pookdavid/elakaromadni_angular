@@ -1,3 +1,4 @@
+//SavedAd.js
 module.exports = (sequelize, DataTypes) => {
   const SavedAd = sequelize.define('SavedAd', {}, {
     tableName: 'saved_ads',

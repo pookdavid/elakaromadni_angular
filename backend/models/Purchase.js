@@ -1,3 +1,4 @@
+//Purchase.js
 module.exports = (sequelize, DataTypes) => {
   const Purchase = sequelize.define('Purchase', {
     amount: {

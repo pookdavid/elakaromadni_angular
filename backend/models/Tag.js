@@ -1,15 +1,37 @@
-module.exports = (sequelize, DataTypes) => {
-    const Tag = sequelize.define('Tag', {
-      name: DataTypes.STRING
+// models/Tag.js
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
+  const Tag = sequelize.define('Tag', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    name: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      unique: true,
+      validate: {
+        notEmpty: true,
+        len: [1, 255]
+      }
+    }
+  }, {
+    tableName: 'tags',
+    timestamps: false, // No created_at/updated_at
+    underscored: true
+  });
+
+  Tag.associate = (models) => {
+    Tag.belongsToMany(models.Ad, {
+      through: models.AdTag, // Explicit junction model
+      foreignKey: 'tag_id',
+      otherKey: 'ad_id',
+      as: 'ads',
+      onDelete: 'CASCADE'
     });
-  
-    Tag.associate = models => {
-      Tag.belongsToMany(models.Ad, {
-        through: models.AdTag,
-        foreignKey: 'tag_id',
-        as: 'ads'
-      });
-    };
-  
-    return Tag;
   };
+
+  return Tag;
+};

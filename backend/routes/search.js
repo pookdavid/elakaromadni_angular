@@ -1,3 +1,4 @@
+//search.js
 const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
@@ -18,20 +19,24 @@ router.get('/ads', searchController.searchAds, async (req, res) => {
       limit = 20
     } = req.query;
 
+    // Build where clauses
     const adWhere = {};
     const carSpecWhere = {};
     
+    // Price filtering
     if (minPrice || maxPrice) {
       adWhere.price = {};
       if (minPrice) adWhere.price[Op.gte] = Number(minPrice);
       if (maxPrice) adWhere.price[Op.lte] = Number(maxPrice);
     }
 
+    // Car specifications filtering
     if (brand) carSpecWhere.brand = brand;
     if (year) carSpecWhere.year = Number(year);
     if (mileage) carSpecWhere.mileage = { [Op.lte]: Number(mileage) };
     if (fuelType) carSpecWhere.fuel_type = fuelType;
 
+    // Pagination
     const offset = (Number(page) - 1) * Number(limit);
 
     const { count, rows: ads } = await Ad.findAndCountAll({

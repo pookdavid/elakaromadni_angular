@@ -1,3 +1,4 @@
+//User.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -67,7 +68,7 @@ module.exports = (sequelize) => {
 
     User.hasMany(models.SavedAd, {
       foreignKey: 'user_id',
-      as: 'savedAds'
+      as: 'saved_ads'
     });
 
     User.hasMany(models.QuestionAnswer, {

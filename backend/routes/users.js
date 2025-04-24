@@ -1,41 +1,14 @@
-const { DataTypes } = require('sequelize');
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/userController');
+const auth = require('../middlewares/auth');
 
-module.exports = (sequelize) => {
-  const User = sequelize.define('User', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    username: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
-      validate: {
-        isEmail: true
-      }
-    },
-    passwordHash: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: 'password_hash'
-    },
-    role: {
-      type: DataTypes.ENUM('user', 'admin'),
-      defaultValue: 'user'
-    }
-  }, {
-    tableName: 'users',
-    underscored: true,
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: false
-  });
+router.get('/me', auth, userController.getMe);
+// Public route
+router.get('/:id', userController.getProfile);
 
-  return User;
-};
+// Protected routes (require authentication)
+
+router.post('/save-ad', auth, userController.saveAd);
+
+module.exports = router;

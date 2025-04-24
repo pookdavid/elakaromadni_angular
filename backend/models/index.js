@@ -1,3 +1,4 @@
+//index.js
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
@@ -5,12 +6,14 @@ const sequelize = require('../config/database');
 
 const models = {};
 
+// Load core models first
 const coreModels = ['User', 'Category', 'Tag'];
 coreModels.forEach(modelName => {
   const model = require(`./${modelName}`)(sequelize, Sequelize.DataTypes);
   models[model.name] = model;
 });
 
+// Load other models
 fs.readdirSync(__dirname)
   .filter(file => {
     return (
@@ -24,9 +27,11 @@ fs.readdirSync(__dirname)
     models[model.name] = model;
   });
 
+// Load junction model
 const AdTag = require('./AdTag')(sequelize, Sequelize.DataTypes);
 models[AdTag.name] = AdTag;
 
+// Run associations
 Object.values(models).forEach(model => {
   if (model.associate) {
     model.associate(models);

@@ -1,11 +1,11 @@
-// src/app/components/car-details/car-details.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CarService } from '../../services/car.service';
+import { CarService, Ad } from '../../services/car.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-car-details',
@@ -13,19 +13,20 @@ import { CarService } from '../../services/car.service';
   imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
   template: `
     <div class="p-8 max-w-4xl mx-auto">
-      <mat-card>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div *ngFor="let image of car?.images">
-            <img [src]="image" class="w-full h-64 object-cover">
-          </div>
+    <mat-card>
+      <!-- Fix: Add ? after specs -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div *ngFor="let image of car?.specs?.images">
+          <img [src]="image" class="w-full h-64 object-cover">
         </div>
+      </div>
         
         <mat-card-content class="mt-6">
-          <h1 class="text-3xl font-bold">{{car?.specs.brand}} {{car?.specs.model}}</h1>
+          <h1 class="text-3xl font-bold">{{car?.specs?.brand}} {{car?.specs?.model}}</h1>
           <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
               <p class="text-gray-600">Évjárat</p>
-              <p class="text-lg">{{car?.specs.year}}</p>
+              <p class="text-lg">{{car?.specs?.year}}</p>
             </div>
             <div>
               <p class="text-gray-600">Ár</p>
@@ -33,11 +34,11 @@ import { CarService } from '../../services/car.service';
             </div>
             <div>
               <p class="text-gray-600">Kilométeróra állás</p>
-              <p class="text-lg">{{car?.specs.mileage | number}} km</p>
+              <p class="text-lg">{{car?.specs?.mileage | number}} km</p>
             </div>
             <div>
               <p class="text-gray-600">Üzemanyag típus</p>
-              <p class="text-lg">{{car?.specs.fuel_type || 'N/A'}}</p>
+              <p class="text-lg">{{car?.specs?.fuel_type || 'N/A'}}</p>
             </div>
           </div>
           
@@ -52,7 +53,7 @@ import { CarService } from '../../services/car.service';
   styles: []
 })
 export class CarDetailsComponent implements OnInit {
-  car?: any;
+  car?: Ad;
 
   constructor(
     private route: ActivatedRoute,
@@ -61,8 +62,13 @@ export class CarDetailsComponent implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
-    this.carService.getCarById(+id).subscribe(car => {
-      this.car = car;
+    this.carService.getCarById(+id).subscribe({
+      next: (car: Ad) => {
+        this.car = car;
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Error loading car details:', err);
+      }
     });
   }
 }

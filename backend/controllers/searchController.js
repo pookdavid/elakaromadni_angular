@@ -1,3 +1,4 @@
+//searchController.js
 const { Ad, CarSpec } = require('../models');
 const { Op } = require('sequelize');
 const { success, error } = require('../utils/apiResponse');

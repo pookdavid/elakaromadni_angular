@@ -1,3 +1,4 @@
+//apiResponse.js
 module.exports = {
   success: (res, status = 200, message = 'Success', data = null) => {
     res.status(status).json({

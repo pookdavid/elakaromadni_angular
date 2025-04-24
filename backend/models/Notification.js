@@ -1,3 +1,4 @@
+//Notification.js
 module.exports = (sequelize, DataTypes) => {
   const Notification = sequelize.define('Notification', {
     message: {

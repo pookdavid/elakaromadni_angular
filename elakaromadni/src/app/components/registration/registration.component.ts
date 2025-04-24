@@ -51,30 +51,18 @@ export class RegistrationComponent {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = null;
-      
       const { name, email, password } = this.registerForm.value;
       
-      this.authService.register({ name: name!, email: email!, password: password! })
-        .subscribe({
-          next: () => {
-            this.authService.login({ email: email!, password: password! })
-              .subscribe({
-                next: () => this.router.navigate(['/']),
-                error: (loginError) => {
-                  this.isLoading = false;
-                  this.errorMessage = 'Automatic login failed. Please login manually.';
-                  console.error('Login failed:', loginError);
-                }
-              });
-          },
-          error: (registerError) => {
-            this.isLoading = false;
-            this.errorMessage = 'Registration failed. Please try again.';
-            console.error('Registration failed:', registerError);
-          }
-        });
+      this.authService.register({ 
+        name: name!, 
+        email: email!, 
+        password: password! 
+      }).subscribe({
+        error: (registerError: any) => {
+          console.error('Registration failed:', registerError);
+          this.errorMessage = registerError.error?.message || 'Registration failed';
+        }
+      });
     }
   }
 }

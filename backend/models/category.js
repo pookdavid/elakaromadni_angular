@@ -1,3 +1,4 @@
+//category.js
 module.exports = (sequelize, DataTypes) => {
   const Category = sequelize.define('Category', {
     name: {
@@ -10,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'categories',
-    timestamps: false,
+    timestamps: false, // Disable if your table doesn't have these columns
     underscored: true
   });
 

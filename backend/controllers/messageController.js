@@ -1,27 +1,73 @@
 const { Message, User, Ad } = require('../models');
 const { success, error } = require('../utils/apiResponse');
+const { Op } = require('sequelize');
 
 exports.sendMessage = async (req, res) => {
   try {
+    // 1. Validate required fields
+    if (!req.body.receiver_id || !req.body.ad_id || !req.body.content) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        required: ['receiver_id', 'ad_id', 'content']
+      });
+    }
+
+    // 2. Create message
     const message = await Message.create({
       sender_id: req.user.userId,
       receiver_id: req.body.receiver_id,
       ad_id: req.body.ad_id,
-      content: req.body.content,
-      is_read: false
+      content: req.body.content.substring(0, 1000) // Limit length
     });
 
-    const populatedMessage = await Message.findByPk(message.id, {
+    // 3. Fetch created message with all associations
+    const result = await Message.findByPk(message.id, {
       include: [
-        { model: User, as: 'Sender', attributes: ['id', 'username'] },
-        { model: User, as: 'Receiver', attributes: ['id', 'username'] },
-        { model: Ad, attributes: ['id', 'title'] }
+        {
+          model: User,
+          as: 'sender',
+          attributes: ['id', 'username']
+        },
+        {
+          model: User,
+          as: 'receiver',
+          attributes: ['id', 'username']
+        },
+        {
+          model: Ad,
+          as: 'ad', // MUST match your Message model association
+          attributes: ['id', 'title'],
+          include: [{
+            model: User,
+            as: 'seller',
+            attributes: ['id', 'username']
+          }]
+        }
       ]
     });
 
-    success(res, 201, populatedMessage);
-  } catch (err) {
-    error(res, 500, 'Failed to send message', err);
+    // 4. Format response
+    const response = {
+      ...result.get({ plain: true }),
+      is_read: false
+    };
+
+    res.status(201).json(response);
+  } catch (error) {
+    console.error('Message creation failed:', error);
+    
+    // Handle specific error cases
+    if (error.name === 'SequelizeForeignKeyConstraintError') {
+      return res.status(400).json({
+        error: 'Invalid receiver_id or ad_id',
+        details: 'The specified user or ad does not exist'
+      });
+    }
+
+    res.status(500).json({
+      error: 'Failed to send message',
+      details: process.env.NODE_ENV === 'development' ? error.message : null
+    });
   }
 };
 
@@ -35,14 +81,20 @@ exports.getConversations = async (req, res) => {
         ]
       },
       include: [
-        { model: User, as: 'Sender', attributes: ['id', 'username'] },
-        { model: User, as: 'Receiver', attributes: ['id', 'username'] },
-        { model: Ad, attributes: ['id', 'title'] }
+        { model: User, as: 'sender', attributes: ['id', 'username'] },
+        { model: User, as: 'receiver', attributes: ['id', 'username'] },
+        { model: Ad, as:'ad', attributes: ['id', 'title'] }
       ],
       order: [['created_at', 'DESC']]
     });
 
-    success(res, 200, conversations);
+    // Add default is_read if needed
+    const responseData = conversations.map(conv => ({
+      ...conv.toJSON(),
+      is_read: conv.is_read || false
+    }));
+
+    success(res, 200, responseData);
   } catch (err) {
     error(res, 500, 'Failed to fetch conversations', err);
   }

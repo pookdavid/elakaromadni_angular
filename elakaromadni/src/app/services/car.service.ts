@@ -1,39 +1,60 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
-export interface Car {
+export interface Ad {
   id: number;
   title: string;
-  description: string;
+  description?: string;
   price: number;
-  images: string[];
   specs: {
     brand: string;
     model: string;
     year: number;
-    mileage?: number;
-    fuel_type?: string;
+    mileage: number;
+    fuel_type: string;
+    images: string[];
   };
-  created_at?: string;
-  updated_at?: string;
+  images?: string[]; 
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class CarService {
-  private apiUrl = 'http://localhost:3000/api/ads';
+  private apiUrl = `${environment.apiUrl}/ads`;
 
   constructor(private http: HttpClient) { }
 
-  getCars(): Observable<Car[]> {
-    return this.http.get<Car[]>(this.apiUrl);
+  getCars(params?: any): Observable<Ad[]> {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null) {
+          httpParams = httpParams.append(key, params[key]);
+        }
+      });
+    }
+    return this.http.get<Ad[]>('http://localhost:3000/api/ads', { params: httpParams });
   }
 
-  getCarById(id: number): Observable<Car> {
-    return this.http.get<Car>(`${this.apiUrl}/${id}`);
+  createCar(formData: FormData): Observable<Ad> {
+    return this.http.post<Ad>(this.apiUrl, formData).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error creating ad:', error);
+        return throwError(() => new Error('Failed to create ad'));
+      })
+    );
   }
 
-  createCar(formData: FormData): Observable<Car> {
-    return this.http.post<Car>(this.apiUrl, formData);
+  getCarById(id: number): Observable<Ad> {
+    return this.http.get<Ad>(`${this.apiUrl}/${id}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error fetching car:', error);
+        return throwError(() => new Error('Failed to fetch car details'));
+      })
+    );
   }
 }

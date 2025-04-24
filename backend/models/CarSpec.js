@@ -1,6 +1,13 @@
-module.exports = (sequelize, DataTypes) => {
+// models/CarSpec.js
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
   const CarSpec = sequelize.define('CarSpec', {
-    ad_id: DataTypes.INTEGER,
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
     brand: DataTypes.STRING,
     model: DataTypes.STRING,
     year: DataTypes.INTEGER,
@@ -8,10 +15,17 @@ module.exports = (sequelize, DataTypes) => {
     fuel_type: DataTypes.STRING,
     transmission: DataTypes.STRING,
     color: DataTypes.STRING,
-    doors: DataTypes.INTEGER
+    doors: DataTypes.INTEGER,
+    ad_id: DataTypes.INTEGER
+  }, {
+    tableName: 'car_specs',
+    underscored: true,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false
   });
 
-  CarSpec.associate = models => {
+  CarSpec.associate = (models) => {
     CarSpec.belongsTo(models.Ad, {
       foreignKey: 'ad_id',
       as: 'ad'

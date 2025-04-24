@@ -1,6 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
+import { tap } from 'rxjs/operators';
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+}
 
 interface AuthResponse {
   token: string;
@@ -12,57 +25,51 @@ interface AuthResponse {
   };
 }
 
-interface UserData {
-  name: string;
-  email: string;
-  password: string;
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  private apiUrl = '/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
-  register(userData: UserData): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, {
-      username: userData.name,
-      email: userData.email,
-      password: userData.password
-    }).pipe(
-      tap(response => this.storeAuthData(response))
+  register(userData: RegisterData) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
+      tap(response => {
+        localStorage.setItem('auth_token', response.token);
+        this.router.navigate(['/']);
+      })
     );
   }
 
-  login(credentials: { email: string; password: string }): Observable<AuthResponse> {
+  login(credentials: LoginCredentials) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(response => this.storeAuthData(response))
+      tap(response => {
+        localStorage.setItem('auth_token', response.token);
+        this.router.navigate(['/ads']);
+      })
     );
   }
 
-  private storeAuthData(response: AuthResponse): void {
-    if (response.token) {
-      localStorage.setItem('auth_token', response.token);
-      localStorage.setItem('current_user', JSON.stringify(response.user));
-    }
+  getToken(): string | null {
+    return localStorage.getItem('auth_token');
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
   }
 
   logout(): void {
     localStorage.removeItem('auth_token');
-    localStorage.removeItem('current_user');
-  }
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('auth_token');
-  }
-
-  getCurrentUser() {
-    const userData = localStorage.getItem('current_user') || 'null';
-    return JSON.parse(userData);
+    this.router.navigate(['/login']);
   }
 
   getCurrentUserId(): number | null {
-    const user = this.getCurrentUser();
-    return user?.id || null;
+    const token = this.getToken();
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.userId || null;
+    }
+    return null;
   }
 }
