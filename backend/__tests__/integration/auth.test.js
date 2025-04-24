@@ -8,7 +8,6 @@ describe('Auth API', () => {
     await User.create(adminUser);
   });
 
-  // REGISTER
   describe('POST /register', () => {
     test('should register new user', async () => {
       const res = await request(app)
@@ -28,7 +27,6 @@ describe('Auth API', () => {
     });
   });
 
-  // LOGIN
   describe('POST /login', () => {
     test('should login with valid credentials', async () => {
       const res = await request(app)

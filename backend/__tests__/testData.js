@@ -1,5 +1,4 @@
 module.exports = {
-    // Users
     adminUser: {
       username: 'admin',
       email: 'admin@example.com',
@@ -12,7 +11,6 @@ module.exports = {
       password: 'TestPass123!'
     },
   
-    // Ads
     sampleAd: {
       title: 'Honda Civic 2018',
       price: 15000,
@@ -22,10 +20,9 @@ module.exports = {
         model: 'Civic',
         year: 2018
       },
-      tags: [1, 2] // Used, Like New
+      tags: [1, 2]
     },
   
-    // Messages
     sampleMessage: {
       content: 'Is this still available?',
       ad_id: 1001

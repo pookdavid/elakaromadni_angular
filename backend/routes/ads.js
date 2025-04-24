@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adController = require('../controllers/adController');
+const auth = require('../middlewares/auth');
 
 router.get('/', adController.getAllAds);
 router.get('/search', adController.searchAds);

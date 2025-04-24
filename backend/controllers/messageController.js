@@ -4,7 +4,6 @@ const { Op } = require('sequelize');
 
 exports.sendMessage = async (req, res) => {
   try {
-    // 1. Validate required fields
     if (!req.body.receiver_id || !req.body.ad_id || !req.body.content) {
       return res.status(400).json({
         error: 'Missing required fields',
@@ -12,15 +11,13 @@ exports.sendMessage = async (req, res) => {
       });
     }
 
-    // 2. Create message
     const message = await Message.create({
       sender_id: req.user.userId,
       receiver_id: req.body.receiver_id,
       ad_id: req.body.ad_id,
-      content: req.body.content.substring(0, 1000) // Limit length
+      content: req.body.content.substring(0, 1000)
     });
 
-    // 3. Fetch created message with all associations
     const result = await Message.findByPk(message.id, {
       include: [
         {
@@ -35,7 +32,7 @@ exports.sendMessage = async (req, res) => {
         },
         {
           model: Ad,
-          as: 'ad', // MUST match your Message model association
+          as: 'ad',
           attributes: ['id', 'title'],
           include: [{
             model: User,
@@ -46,7 +43,6 @@ exports.sendMessage = async (req, res) => {
       ]
     });
 
-    // 4. Format response
     const response = {
       ...result.get({ plain: true }),
       is_read: false
@@ -56,7 +52,6 @@ exports.sendMessage = async (req, res) => {
   } catch (error) {
     console.error('Message creation failed:', error);
     
-    // Handle specific error cases
     if (error.name === 'SequelizeForeignKeyConstraintError') {
       return res.status(400).json({
         error: 'Invalid receiver_id or ad_id',
@@ -88,7 +83,6 @@ exports.getConversations = async (req, res) => {
       order: [['created_at', 'DESC']]
     });
 
-    // Add default is_read if needed
     const responseData = conversations.map(conv => ({
       ...conv.toJSON(),
       is_read: conv.is_read || false

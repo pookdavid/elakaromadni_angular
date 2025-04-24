@@ -1,4 +1,3 @@
-//QuestionAnswer.js
 module.exports = (sequelize, DataTypes) => {
     const QuestionAnswer = sequelize.define('QuestionAnswer', {
       question: {

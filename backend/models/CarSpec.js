@@ -1,4 +1,3 @@
-// models/CarSpec.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -8,15 +7,15 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true
     },
-    brand: DataTypes.STRING,
-    model: DataTypes.STRING,
     year: DataTypes.INTEGER,
     mileage: DataTypes.INTEGER,
     fuel_type: DataTypes.STRING,
     transmission: DataTypes.STRING,
     color: DataTypes.STRING,
     doors: DataTypes.INTEGER,
-    ad_id: DataTypes.INTEGER
+    ad_id: DataTypes.INTEGER,
+    engine_size: DataTypes.STRING,
+    body_type: DataTypes.STRING
   }, {
     tableName: 'car_specs',
     underscored: true,
@@ -26,10 +25,7 @@ module.exports = (sequelize) => {
   });
 
   CarSpec.associate = (models) => {
-    CarSpec.belongsTo(models.Ad, {
-      foreignKey: 'ad_id',
-      as: 'ad'
-    });
+    CarSpec.belongsTo(models.Ad, { foreignKey: 'ad_id', as: 'ad' });
   };
 
   return CarSpec;

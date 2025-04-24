@@ -5,7 +5,6 @@ const { Sequelize } = require('sequelize');
 
 const app = express();
 
-const cors = require('cors');
 app.use(cors({
   origin: 'http://localhost:4200',
   credentials: true
@@ -149,7 +148,7 @@ function handleSequelizeError(err, res) {
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, async () => {
   await testConnection();
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });
 
 process.on('SIGTERM', () => {

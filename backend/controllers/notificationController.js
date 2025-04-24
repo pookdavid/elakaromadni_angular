@@ -1,4 +1,3 @@
-//notificationController.js
 const { Notification } = require('../models');
 const { success, error } = require('../utils/apiResponse');
 

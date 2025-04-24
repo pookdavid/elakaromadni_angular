@@ -1,15 +1,13 @@
-//authcontroller.js
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const { Op } = require('sequelize');
 
 exports.register = async (req, res) => {
-  // Debug: Log incoming request
   console.log('Registration request received. Headers:', req.headers);
   console.log('Request body:', req.body);
 
-  // 1. Validate request body exists
   if (!req.body || typeof req.body !== 'object' || Object.keys(req.body).length === 0) {
     console.error('Registration failed: Empty request body');
     return res.status(400).json({
@@ -18,14 +16,12 @@ exports.register = async (req, res) => {
     });
   }
 
-  // 2. Destructure with fallbacks
   const { 
     username = null, 
     email = null, 
     password = null 
   } = req.body;
 
-  // 3. Validate required fields
   const missingFields = [];
   if (!username) missingFields.push('username');
   if (!email) missingFields.push('email');
@@ -40,12 +36,10 @@ exports.register = async (req, res) => {
     });
   }
 
-  // 4. Trim whitespace
   const cleanUsername = username.toString().trim();
   const cleanEmail = email.toString().trim();
   const cleanPassword = password.toString().trim();
 
-  // 5. Validate field formats
   const validationErrors = [];
   
   if (cleanUsername.length < 3) {
@@ -69,7 +63,6 @@ exports.register = async (req, res) => {
   }
 
   try {
-    // 6. Check for existing user
     const existingUser = await User.findOne({
       where: {
         [Op.or]: [
@@ -89,7 +82,6 @@ exports.register = async (req, res) => {
       });
     }
 
-    // 7. Create user
     const hashedPassword = await bcrypt.hash(cleanPassword, 10);
     const user = await User.create({
       username: cleanUsername,
@@ -98,7 +90,6 @@ exports.register = async (req, res) => {
       role: 'user'
     });
 
-    // 8. Generate JWT
     const token = jwt.sign(
       {
         userId: user.id,
@@ -108,7 +99,6 @@ exports.register = async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    // 9. Success response
     console.log(`User ${user.id} registered successfully`);
     return res.status(201).json({
       success: true,
@@ -139,7 +129,6 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Basic validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -147,7 +136,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Find user
     const user = await User.findOne({ 
       where: { email } 
     });
@@ -159,7 +147,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Verify password
     const validPassword = await bcrypt.compare(password, user.passwordHash);
     if (!validPassword) {
       return res.status(401).json({
@@ -168,14 +155,12 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Create JWT token
     const token = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // Return response
     res.json({
       success: true,
       token,

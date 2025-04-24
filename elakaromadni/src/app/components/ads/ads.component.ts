@@ -91,15 +91,13 @@ export class AdsComponent implements OnInit {
   private buildSearchParams() {
     const formValue = this.searchForm.value;
     const params: {[key: string]: any} = {};
-  
-    if (formValue.brand) params.brand = formValue.brand;
-    if (formValue.model) params.model = formValue.model;
-    if (formValue.minPrice) params.minPrice = formValue.minPrice;
-    if (formValue.maxPrice) params.maxPrice = formValue.maxPrice;
-    if (formValue.minYear) params.year = formValue.minYear;
-    if (formValue.maxMileage) params.mileage = formValue.maxMileage;
-    if (formValue.fuelType) params.fuelType = formValue.fuelType;
-  
+    if (formValue['brand']) params['brand'] = formValue['brand'];
+    if (formValue['model']) params['model'] = formValue['model'];
+    if (formValue['minPrice']) params['minPrice'] = formValue['minPrice'];
+    if (formValue['maxPrice']) params['maxPrice'] = formValue['maxPrice'];
+    if (formValue['minYear']) params['year'] = formValue['minYear'];
+    if (formValue['maxMileage']) params['mileage'] = formValue['maxMileage'];
+    if (formValue['fuelType']) params['fuelType'] = formValue['fuelType'];
     return params;
   }
 

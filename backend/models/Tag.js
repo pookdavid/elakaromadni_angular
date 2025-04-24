@@ -1,4 +1,3 @@
-// models/Tag.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -19,13 +18,13 @@ module.exports = (sequelize) => {
     }
   }, {
     tableName: 'tags',
-    timestamps: false, // No created_at/updated_at
+    timestamps: false,
     underscored: true
   });
 
   Tag.associate = (models) => {
     Tag.belongsToMany(models.Ad, {
-      through: models.AdTag, // Explicit junction model
+      through: models.AdTag,
       foreignKey: 'tag_id',
       otherKey: 'ad_id',
       as: 'ads',

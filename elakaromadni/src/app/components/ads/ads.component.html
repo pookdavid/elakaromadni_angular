@@ -1,34 +1,46 @@
-<mat-card *ngFor="let ad of filteredAds" class="relative">
+<mat-card *ngFor="let ad of filteredAds" class="car-card relative hover:shadow-lg transition-shadow">
+  <div class="image-container">
     <img mat-card-image 
-         [src]="ad.specs.images[0] || 'assets/images/placeholder-car.jpg'" 
-         class="h-48 object-cover"
-         [alt]="ad.specs.brand + ' ' + ad.specs.model">
-    
-    <mat-card-content>
-      <h2 class="text-xl font-bold">{{ ad.specs.brand }} {{ ad.specs.model }}</h2>
-      <div class="space-y-2 mt-2">
-        <p class="text-gray-600 flex items-center gap-2">
-          <mat-icon>calendar_today</mat-icon>
-          {{ ad.specs.year }}
+      [src]="ad.specs?.images?.[0] || 'assets/images/placeholder-car.jpg'"
+      class="h-64 object-cover"
+      [alt]="ad.brand + ' ' + ad.model">
+  </div>
+
+  <mat-card-content class="p-6">
+    <div class="flex justify-between items-start mb-4">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800 mb-1">
+          {{ ad.brand }} {{ ad.model }}
+        </h1>
+        <p class="text-lg text-gray-600">
+          {{ ad.specs?.year || 'N/A' }} • 
+          {{ (ad.specs?.mileage | number:'1.0-0') || '0' }} km
+          {{ ad.location || 'Location not specified' }}
         </p>
-        <p class="text-gray-600 flex items-center gap-2">
-          <mat-icon>speed</mat-icon>
-          {{ ad.specs.mileage | number:'1.0-0' }} km
-        </p>
-        <p class="text-gray-600 flex items-center gap-2">
-          <mat-icon>local_gas_station</mat-icon>
-          {{ ad.specs.fuel_type || 'N/A' }}
-        </p>
-        <p class="text-2xl font-bold text-primary mt-4">
+      </div>
+      <div class="text-right">
+        <p class="text-3xl font-bold text-primary">
           {{ ad.price | number:'1.0-0' }} HUF
         </p>
       </div>
-    </mat-card-content>
-  
-    <mat-card-actions>
-      <button mat-button color="primary" [routerLink]="['/ads', ad.id]">
-        <mat-icon>info</mat-icon>
-        Details
-      </button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 py-4 border-t border-b">
+      <div class="spec-item">
+        <mat-icon class="text-primary">engineering</mat-icon>
+        <div>
+          <p class="spec-label">Engine</p>
+          <p class="spec-value">{{ ad.specs.engine_size || 'N/A' }}</p>
+        </div>
+      </div>
+
+      <div class="spec-item">
+        <mat-icon class="text-primary">airline_seat_recline_extra</mat-icon>
+        <div>
+          <p class="spec-label">Body Type</p>
+          <p class="spec-value">{{ ad.specs.body_type || 'N/A' }}</p>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

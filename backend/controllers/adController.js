@@ -1,4 +1,3 @@
-//adController.js
 const { Ad, CarSpec, Tag, Category, User, Review, Message } = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../models');
@@ -6,15 +5,33 @@ const { sequelize } = require('../models');
 exports.getAllAds = async (req, res) => {
   try {
     const ads = await Ad.findAll({
+      attributes: ['id', 'brand', 'model', 'location', 'price', 'description', 'created_at'],
       include: [
-        { model: User, as: 'seller', attributes: ['id', 'username'] },
-        { model: CarSpec, as: 'specs' },
-        { model: Category, as: 'category' },
-        { model: Tag, as: 'tags', through: { attributes: [] } },
+        { 
+          model: User, 
+          as: 'seller', 
+          attributes: ['id', 'username'] 
+        },
+        { 
+          model: CarSpec, 
+          as: 'specs',
+          attributes: ['year', 'mileage', 'fuel_type', 'transmission', 'color', 'doors', 'engine_size', 'body_type'] 
+        },
+        { 
+          model: Category, 
+          as: 'category',
+          attributes: ['id', 'name']
+        },
+        { 
+          model: Tag, 
+          as: 'tags', 
+          through: { attributes: [] },
+          attributes: ['id', 'name']
+        },
         {
           model: Review,
           as: 'reviews',
-          attributes: { exclude: ['updated_at'] }, // Explicit exclusion
+          attributes: { exclude: ['updated_at'] },
           include: [{
             model: User,
             as: 'user',
@@ -24,7 +41,7 @@ exports.getAllAds = async (req, res) => {
       ],
       order: [['created_at', 'DESC']]
     });
-    
+
     res.json(ads);
   } catch (error) {
     console.error('Failed to fetch ads:', error);
@@ -40,7 +57,6 @@ exports.getAllAds = async (req, res) => {
 
 exports.getAdById = async (req, res) => {
   try {
-    // First check if messages table has is_read column
     const [results] = await sequelize.query(`
       SELECT COLUMN_NAME 
       FROM INFORMATION_SCHEMA.COLUMNS 
@@ -116,7 +132,6 @@ exports.getAdById = async (req, res) => {
       });
     }
 
-    // If is_read column doesn't exist, add default value
     if (!hasIsReadColumn && ad.messages) {
       ad.messages = ad.messages.map(message => {
         return {
@@ -141,10 +156,8 @@ exports.getAdById = async (req, res) => {
 
 exports.searchAds = async (req, res) => {
   try {
-    // Build query using Sequelize models instead of raw SQL
     const adWhereConditions = {};
     
-    // Price filters
     if (req.query.minPrice) {
       adWhereConditions.price = adWhereConditions.price || {};
       adWhereConditions.price[Op.gte] = Number(req.query.minPrice);
@@ -155,15 +168,13 @@ exports.searchAds = async (req, res) => {
       adWhereConditions.price[Op.lte] = Number(req.query.maxPrice);
     }
     
-    // Set up include for car_specs if needed
     const includeOptions = [];
     const carSpecsWhereConditions = {};
     
-    // Only add car_specs conditions if brand or year are specified
     if (req.query.brand || req.query.year) {
       if (req.query.brand) {
         carSpecsWhereConditions.brand = {
-          [Op.like]: `%${req.query.brand.trim()}%` // Using LIKE for partial matches
+          [Op.like]: `%${req.query.brand.trim()}%`
         };
       }
       
@@ -174,12 +185,11 @@ exports.searchAds = async (req, res) => {
       includeOptions.push({
         model: CarSpec,
         as: 'specs',
-        required: false, // Make this a LEFT JOIN
+        required: false, 
         where: Object.keys(carSpecsWhereConditions).length > 0 ? carSpecsWhereConditions : undefined
       });
     }
     
-    // Add other includes as needed (seller info, etc.)
     includeOptions.push({
       model: User,
       as: 'seller',
@@ -192,7 +202,6 @@ exports.searchAds = async (req, res) => {
       carSpecs: carSpecsWhereConditions
     });
     
-    // Execute query
     const results = await Ad.findAll({
       where: adWhereConditions,
       include: includeOptions,
@@ -201,9 +210,7 @@ exports.searchAds = async (req, res) => {
     
     console.log('Results count:', results.length);
     
-    // Format results
     const formattedResults = results.map(ad => {
-      // Convert the Sequelize model instance to a plain object
       const plainAd = ad.get({ plain: true });
       
       return {
@@ -239,7 +246,6 @@ exports.createAd = async (req, res) => {
   const transaction = await sequelize.transaction();
   
   try {
-    // 1. Validate Input
     const validationErrors = [];
     
     if (!req.body.title?.trim()) {
@@ -282,7 +288,6 @@ exports.createAd = async (req, res) => {
       });
     }
 
-    // 2. Check for Duplicate Content (before creating)
     const existingAd = await Ad.findOne({
       where: {
         title: req.body.title.trim(),
@@ -302,7 +307,6 @@ exports.createAd = async (req, res) => {
       });
     }
 
-    // 3. Create the Ad (let DB handle ID)
     const adData = {
       title: req.body.title.trim(),
       price: parseFloat(req.body.price),
@@ -311,12 +315,10 @@ exports.createAd = async (req, res) => {
       category_id: req.body.categoryId || 1
     };
 
-    // Explicitly exclude ID to prevent conflicts
     if (adData.id) delete adData.id;
 
     const ad = await Ad.create(adData, { transaction });
 
-    // 4. Create Car Specs
     await CarSpec.create({
       brand: req.body.specs.brand.trim(),
       model: req.body.specs.model.trim(),
@@ -326,10 +328,9 @@ exports.createAd = async (req, res) => {
       transmission: req.body.specs.transmission || null,
       color: req.body.specs.color || null,
       doors: req.body.specs.doors ? parseInt(req.body.specs.doors) : null,
-      ad_id: ad.id // Use the auto-generated ID
+      ad_id: ad.id
     }, { transaction , ignoreDuplicates: true});
 
-    // 5. Handle Tags
     if (req.body.tags && req.body.tags.length > 0) {
       const existingTags = await Tag.findAll({
         where: { id: req.body.tags },
@@ -347,7 +348,6 @@ exports.createAd = async (req, res) => {
       await ad.addTags(req.body.tags, { transaction });
     }
 
-    // 6. Commit and Return
     await transaction.commit();
 
     const createdAd = await Ad.findByPk(ad.id, {
@@ -361,14 +361,12 @@ exports.createAd = async (req, res) => {
     return res.status(201).json(createdAd);
 
   } catch (error) {
-    // 7. Error Handling
     if (transaction.finished !== 'commit') {
       await transaction.rollback();
     }
 
     console.error('Ad creation error:', error);
 
-    // Handle specific error types
     if (error.name === 'SequelizeUniqueConstraintError') {
       if (error.fields && error.fields.PRIMARY) {
         return res.status(500).json({
@@ -400,7 +398,6 @@ exports.createAd = async (req, res) => {
   }
 };
 
-// Common authorization middleware
 const authorizeAdOwner = async (req, res, next) => {
   try {
     const ad = await Ad.findByPk(req.params.id);
@@ -409,12 +406,11 @@ const authorizeAdOwner = async (req, res, next) => {
       return res.status(404).json({ error: 'Ad not found' });
     }
 
-    // Debug logs
     console.log('Ad owner ID:', ad.seller_id);
     console.log('Requesting user ID:', req.user.userId);
     console.log('Comparison:', ad.seller_id === req.user.userId);
 
-    if (ad.seller_id !== req.user.userId) { // Use snake_case
+    if (ad.seller_id !== req.user.userId) { 
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
@@ -426,7 +422,6 @@ const authorizeAdOwner = async (req, res, next) => {
   }
 };
 
-// Update Ad
 exports.updateAd = [authorizeAdOwner, async (req, res) => {
   try {
     const updatedAd = await req.ad.update(req.body);
@@ -437,7 +432,6 @@ exports.updateAd = [authorizeAdOwner, async (req, res) => {
   }
 }];
 
-// Delete Ad
 exports.deleteAd = [authorizeAdOwner, async (req, res) => {
   try {
     await req.ad.destroy();

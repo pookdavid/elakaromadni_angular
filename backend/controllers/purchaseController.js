@@ -1,4 +1,3 @@
-//purchaseController.js
 const { Payment } = require('../models');
 const { success, error } = require('../utils/apiResponse');
 

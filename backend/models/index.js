@@ -1,4 +1,3 @@
-//index.js
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
@@ -6,20 +5,12 @@ const sequelize = require('../config/database');
 
 const models = {};
 
-// Load core models first
-const coreModels = ['User', 'Category', 'Tag'];
-coreModels.forEach(modelName => {
-  const model = require(`./${modelName}`)(sequelize, Sequelize.DataTypes);
-  models[model.name] = model;
-});
-
-// Load other models
 fs.readdirSync(__dirname)
   .filter(file => {
     return (
-      file.indexOf('.') !== 0 &&
       file !== 'index.js' &&
-      !coreModels.includes(file.replace('.js', ''))
+      !file.includes('.test.js') &&
+      (file.endsWith('.js') || file.endsWith('.cjs'))
     );
   })
   .forEach(file => {
@@ -27,16 +18,21 @@ fs.readdirSync(__dirname)
     models[model.name] = model;
   });
 
-// Load junction model
-const AdTag = require('./AdTag')(sequelize, Sequelize.DataTypes);
-models[AdTag.name] = AdTag;
-
-// Run associations
-Object.values(models).forEach(model => {
-  if (model.associate) {
-    model.associate(models);
+Object.keys(models).forEach(modelName => {
+  if (models[modelName].associate) {
+    models[modelName].associate(models);
   }
 });
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync({ alter: true });
+    console.log('Database connection established successfully');
+  } catch (error) {
+    console.error('Database connection error:', error);
+  }
+})();
 
 module.exports = {
   ...models,

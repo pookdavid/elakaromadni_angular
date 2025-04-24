@@ -7,14 +7,27 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true
     },
-    title: {
-      type: DataTypes.STRING(255),
+    brand: {
+      type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: { msg: 'Title is required' },
-        notEmpty: { msg: 'Title cannot be empty' },
-        len: [3, 255]
+        notNull: { msg: 'Brand is required' },
+        notEmpty: { msg: 'Brand cannot be empty' },
+        len: [2, 255]
       }
+    },
+    model: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: { msg: 'Model is required' },
+        notEmpty: { msg: 'Model cannot be empty' },
+        len: [2, 255]
+      }
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     description: {
       type: DataTypes.TEXT,
@@ -52,42 +65,19 @@ module.exports = (sequelize) => {
       {
         name: 'unique_ad_composite',
         unique: true,
-        fields: ['title', 'price', 'description', 'seller_id']
+        fields: ['brand', 'model', 'price', 'seller_id']
       }
     ]
   });
 
   Ad.associate = (models) => {
-    Ad.belongsTo(models.User, {
-      foreignKey: 'seller_id',
-      as: 'seller'
-    });
-    Ad.belongsTo(models.Category, {
-      foreignKey: 'category_id',
-      as: 'category'
-    });
-    Ad.hasOne(models.CarSpec, {
-      foreignKey: 'ad_id',
-      as: 'specs'
-    });
-    Ad.belongsToMany(models.Tag, {
-      through: models.AdTag,
-      foreignKey: 'ad_id',
-      otherKey: 'tag_id',
-      as: 'tags'
-    });
-    Ad.hasMany(models.Review, {
-      foreignKey: 'ad_id',
-      as: 'reviews'
-    });
-    Ad.hasMany(models.Message, {
-      foreignKey: 'ad_id',
-      as: 'messages'
-    });
-    Ad.hasMany(models.SavedAd,{
-      foreignKey: 'ad_id',
-      as: 'saved_ads'
-    });
+    Ad.belongsTo(models.User, { foreignKey: 'seller_id', as: 'seller' });
+    Ad.belongsTo(models.Category, { foreignKey: 'category_id', as: 'category' });
+    Ad.hasOne(models.CarSpec, { foreignKey: 'ad_id', as: 'specs', onDelete: 'CASCADE'});
+    Ad.belongsToMany(models.Tag, { through: models.AdTag, foreignKey: 'ad_id', as: 'tags' });
+    Ad.hasMany(models.Review, { foreignKey: 'ad_id', as: 'reviews' });
+    Ad.hasMany(models.Message, { foreignKey: 'ad_id', as: 'messages' });
+    Ad.hasMany(models.SavedAd, { foreignKey: 'ad_id', as: 'saved_ads' });
   };
 
   return Ad;

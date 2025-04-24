@@ -1,4 +1,3 @@
-// db/migrations/YYYYMMDDHHMMSS-create-ads.js
 'use strict';
 
 module.exports = {
@@ -8,7 +7,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        initialAutoIncrement: 1000 // Matches your model
+        initialAutoIncrement: 1000
       },
       title: {
         type: Sequelize.STRING(255),
@@ -53,7 +52,6 @@ module.exports = {
       }
     });
 
-    // Add indexes
     await queryInterface.addIndex('ads', ['seller_id']);
     await queryInterface.addIndex('ads', ['category_id']);
     await queryInterface.addIndex('ads', ['price']);
