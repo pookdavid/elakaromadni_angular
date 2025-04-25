@@ -14,7 +14,6 @@ import { HttpErrorResponse } from '@angular/common/http';
   template: `
     <div class="p-8 max-w-4xl mx-auto">
     <mat-card>
-      <!-- Fix: Add ? after specs -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div *ngFor="let image of car?.specs?.images">
           <img [src]="image" class="w-full h-64 object-cover">
@@ -22,7 +21,8 @@ import { HttpErrorResponse } from '@angular/common/http';
       </div>
         
         <mat-card-content class="mt-6">
-          <h1 class="text-3xl font-bold">{{car?.specs?.brand}} {{car?.specs?.model}}</h1>
+          <!-- FIXED: Access brand/model at root level -->
+          <h1 class="text-3xl font-bold">{{car?.brand}} {{car?.model}}</h1>
           <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
               <p class="text-gray-600">Évjárat</p>

@@ -20,11 +20,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatSelectModule,
     MatIconModule
   ],
-  template: `
+  template:`
     <div class="max-w-2xl mx-auto my-8 p-6 bg-white rounded-lg shadow-md">
       <h2 class="text-2xl font-bold mb-6">Új hirdetés feladása</h2>
       <form [formGroup]="carForm" (ngSubmit)="onSubmit()">
-        <!-- Brand Input -->
         <mat-form-field class="w-full mb-4">
           <input matInput placeholder="Márka" formControlName="brand" required>
           <mat-error *ngIf="carForm.get('brand')?.hasError('required')">
@@ -32,7 +31,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           </mat-error>
         </mat-form-field>
 
-        <!-- Model Input -->
         <mat-form-field class="w-full mb-4">
           <input matInput placeholder="Modell" formControlName="model" required>
           <mat-error *ngIf="carForm.get('model')?.hasError('required')">
@@ -40,7 +38,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           </mat-error>
         </mat-form-field>
 
-        <!-- Year Input -->
         <mat-form-field class="w-full mb-4">
           <input matInput type="number" placeholder="Évjárat" 
                  formControlName="year" min="1900" required>
@@ -52,7 +49,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           </mat-error>
         </mat-form-field>
 
-        <!-- Price Input -->
         <mat-form-field class="w-full mb-4">
           <input matInput type="number" placeholder="Ár (HUF)" 
                  formControlName="price" required>
@@ -62,13 +58,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           </mat-error>
         </mat-form-field>
 
-        <!-- Mileage Input -->
         <mat-form-field class="w-full mb-4">
           <input matInput type="number" placeholder="Kilométeróra állás (km)" 
                  formControlName="mileage">
         </mat-form-field>
 
-        <!-- Fuel Type Select -->
         <mat-form-field class="w-full mb-4">
           <mat-label>Üzemanyag típus</mat-label>
           <mat-select formControlName="fuelType">
@@ -79,13 +73,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           </mat-select>
         </mat-form-field>
 
-        <!-- Description Input -->
         <mat-form-field class="w-full mb-4">
           <textarea matInput placeholder="Leírás" 
                     formControlName="description" rows="4"></textarea>
         </mat-form-field>
 
-        <!-- Image Upload -->
         <div class="mb-6">
           <label class="block text-gray-700 mb-2">Képek feltöltése</label>
           <div class="border-2 border-dashed border-gray-300 rounded-lg p-4">
@@ -96,7 +88,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
               Képek kiválasztása
             </button>
             
-            <!-- Preview Images -->
             <div class="mt-4 grid grid-cols-3 gap-2">
               <div *ngFor="let preview of imagePreviews" class="relative image-preview-container">
                 <img [src]="preview" class="h-32 w-full object-cover rounded">
@@ -109,7 +100,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           </div>
         </div>
 
-        <!-- Submit Button -->
         <button mat-raised-button color="primary" type="submit" 
                 [disabled]="!carForm.valid || selectedFiles.length === 0">
           Hirdetés közzététele
@@ -126,13 +116,13 @@ export class AddAdComponent {
   private snackBar = inject(MatSnackBar);
 
   carForm = this.fb.group({
-    brand: ['', Validators.required],
-    model: ['', Validators.required],
-    year: [null, [Validators.required, Validators.min(1900)]],
-    price: [null, Validators.required],
-    mileage: [null],
-    fuelType: [''],
-    description: ['']
+    brand: this.fb.control<string>('', Validators.required),
+    model: this.fb.control<string>('', Validators.required),
+    year: this.fb.control<number | null>(null, [Validators.required, Validators.min(1900)]),
+    price: this.fb.control<number | null>(null, Validators.required),
+    mileage: this.fb.control<number | null>(null),
+    fuelType: this.fb.control<string>(''),
+    description: this.fb.control<string>('')
   });
 
   selectedFiles: File[] = [];
@@ -167,27 +157,27 @@ export class AddAdComponent {
   }
 
   onSubmit() {
-    if (this.carForm.valid && this.selectedFiles.length > 0 && !this.isSubmitting) {
-      this.isSubmitting = true;
-      
+    if (this.carForm.valid && this.selectedFiles.length > 0) {
       const formData = new FormData();
-      const carData = {
-        title: `${this.carForm.value.brand} ${this.carForm.value.model}`,
-        price: this.carForm.value.price,
-        specs: {
-          brand: this.carForm.value.brand,
-          model: this.carForm.value.model,
-          year: this.carForm.value.year,
-          mileage: this.carForm.value.mileage,
-          fuel_type: this.carForm.value.fuelType
-        },
-        description: this.carForm.value.description || ''
-      };
-
-      formData.append('data', JSON.stringify(carData));
-      
-      this.selectedFiles.forEach((file, index) => {
-        formData.append('images', file, `image-${index}`);
+      const formValues = this.carForm.getRawValue();
+  
+      console.log('Form Values:', formValues);
+  
+      formData.append('title', `${formValues.brand} ${formValues.model}`);
+      formData.append('price', String(formValues.price));
+      formData.append('categoryId', '1');
+  
+      formData.append('specs[brand]', formValues.brand!);
+      formData.append('specs[model]', formValues.model!);
+      formData.append('specs[year]', String(formValues.year!));
+      formData.append('specs[mileage]', formValues.mileage?.toString() || '');
+  
+      this.selectedFiles.forEach(file => {
+        formData.append('images', file);
+      });
+  
+      formData.forEach((value, key) => {
+        console.log('FormData:', key, value);
       });
 
       this.carService.createCar(formData).subscribe({
@@ -199,9 +189,11 @@ export class AddAdComponent {
         },
         error: (err) => {
           console.error('Hiba a hirdetés feladásakor:', err);
-          this.snackBar.open('Hiba történt a hirdetés feladása közben!', 'Bezár', {
-            duration: 5000
-          });
+          this.snackBar.open(
+            err.error?.message || 'Hiba történt a hirdetés feladása közben!', 
+            'Bezár',
+            { duration: 5000 }
+          );
           this.isSubmitting = false;
         },
         complete: () => this.isSubmitting = false

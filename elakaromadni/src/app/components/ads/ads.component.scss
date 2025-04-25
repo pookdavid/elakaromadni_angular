@@ -1,0 +1,154 @@
+// ads.component.scss
+#search-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 50px;
+  
+    form {
+      gap: 1rem;
+      
+      button[type="submit"] {
+        background-color: #3f51b5;
+        color: white;
+        transition: all 0.3s ease;
+        height: 56px;
+  
+        &:hover {
+          background-color: darken(#3f51b5, 10%);
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+  
+  .car-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  
+    .image-container {
+      img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 4px 4px 0 0;
+      }
+    }
+  
+    mat-card-content {
+      .text-primary {
+        color: #3f51b5;
+      }
+  
+      .spec-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+  
+        mat-icon {
+          font-size: 24px;
+        }
+  
+        .spec-label {
+          color: #718096;
+          font-size: 0.875rem;
+          margin-bottom: 0.25rem;
+        }
+  
+        .spec-value {
+          color: #2d3748;
+          font-weight: 500;
+        }
+      }
+  
+      .border-t {
+        border-top: 1px solid #e2e8f0;
+      }
+  
+      .border-b {
+        border-bottom: 1px solid #e2e8f0;
+      }
+    }
+  }
+  
+  .price-range-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  
+    .mat-form-field {
+      flex: 1;
+    }
+  }
+  
+  .mat-form-field {
+    .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  
+    .mat-form-field-outline {
+      color: #cbd5e0;
+    }
+  
+    .mat-select-arrow {
+      color: #718096;
+    }
+  }
+  
+  .mat-option {
+    &:hover {
+      background: #f7fafc !important;
+    }
+  }
+  
+  .text-gray-800 {
+    color: #2d3748;
+  }
+  
+  .text-gray-600 {
+    color: #718096;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .text-3xl {
+    font-size: 2rem;
+  }
+  
+  .font-bold {
+    font-weight: 600;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  .gap-4 {
+    gap: 1rem;
+  }

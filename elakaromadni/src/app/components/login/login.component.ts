@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators, FormGroup } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -21,38 +21,46 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatProgressSpinnerModule
   ],
+  template: `
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <input formControlName="email" placeholder="Email">
+      <input formControlName="password" type="password" placeholder="Password">
+      <button type="submit">Login</button>
+    </form>
+  `,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  loginForm: FormGroup;
 
-  isLoading = false;
-  errorMessage: string | null = null;
-
-  loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
-  });
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+    });
+  }
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = null;
-      
-      const { email, password } = this.loginForm.value;
-      
-      this.authService.login({ email: email!, password: password! })
-        .subscribe({
-          next: () => this.router.navigate(['/']),
-          error: (error: Error) => {
-            this.isLoading = false;
-            this.errorMessage = 'Login failed. Please check your credentials.';
-            console.error('Login failed:', error);
-          }
-        });
+      this.authService.login({
+        email: this.loginForm.value.email!,
+        password: this.loginForm.value.password!
+      }).subscribe({
+        next: (response) => {
+          console.log('Login successful. Token:', response.token);
+          localStorage.setItem('auth_token', response.token);
+          this.router.navigate(['/ads']);
+        },
+        error: (err) => {
+          console.error('Login failed:', err);
+          this.loginForm.setErrors({ invalidCredentials: true });
+        }
+      });
     }
   }
 }

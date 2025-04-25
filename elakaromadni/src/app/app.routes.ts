@@ -9,6 +9,7 @@ import { CarDetailsComponent } from './components/car-details/car-details.compon
 import { LoginComponent } from './components/login/login.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { AuthGuard } from './auth/auth.guard';
+import { MyAdsComponent } from './components/my-ads/my-ads.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,5 +21,6 @@ export const routes: Routes = [
   { path: 'cars/:id', component: CarDetailsComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
+  { path: 'my-ads', component: MyAdsComponent, canActivate: [AuthGuard]},
   { path: '**', redirectTo: '' }
 ];

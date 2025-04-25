@@ -1,10 +1,63 @@
+<div class="bg-gray-100 p-4 rounded-lg shadow-md" id="search-section">
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <mat-form-field appearance="outline">
+        
+        <mat-label>Márka</mat-label>
+        <mat-select formControlName="brand" (selectionChange)="onBrandSelected()">
+          <mat-option value="">Mindegy</mat-option>
+          <mat-option *ngFor="let brand of brands" [value]="brand.id">
+            {{ brand.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Modell</mat-label>
+        <mat-select formControlName="model" [disabled]="!searchForm.value.brand">
+          <mat-option value="">Mindegy</mat-option>
+          <mat-option *ngFor="let model of filteredModels" [value]="model.id">
+            {{ model.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Üzemanyag</mat-label>
+        <mat-select formControlName="fuelType">
+          <mat-option value="">Mindegy</mat-option>
+          <mat-option *ngFor="let type of fuelTypes" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <div class="flex gap-2 items-center">
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Ár-tól (Ft)</mat-label>
+          <input matInput type="number" formControlName="minPrice">
+        </mat-form-field>
+        <span class="mx-2"></span>
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Ár-ig (Ft)</mat-label>
+          <input matInput type="number" formControlName="maxPrice">
+        </mat-form-field>
+      </div>
+  
+      <button mat-raised-button color="primary" type="submit" class="h-[56px]">
+        Keresés
+      </button>
+    </form>
+  </div>
+
 <mat-card *ngFor="let ad of filteredAds" class="car-card relative hover:shadow-lg transition-shadow">
   <div class="image-container">
     <img mat-card-image 
-      [src]="ad.specs?.images?.[0] || 'assets/images/placeholder-car.jpg'"
+      [src]="ad.specs?.images?.[0] ?? 'assets/images/placeholder-car.jpg'"
       class="h-64 object-cover"
       [alt]="ad.brand + ' ' + ad.model">
   </div>
+
+  
 
   <mat-card-content class="p-6">
     <div class="flex justify-between items-start mb-4">
@@ -13,8 +66,8 @@
           {{ ad.brand }} {{ ad.model }}
         </h1>
         <p class="text-lg text-gray-600">
-          {{ ad.specs?.year || 'N/A' }} • 
-          {{ (ad.specs?.mileage | number:'1.0-0') || '0' }} km
+          {{ ad.specs?.year ?? 'N/A' }} • 
+          {{ (ad.specs?.mileage | number:'1.0-0') ?? '0' }} km •
           {{ ad.location || 'Location not specified' }}
         </p>
       </div>
@@ -27,10 +80,10 @@
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 py-4 border-t border-b">
       <div class="spec-item">
-        <mat-icon class="text-primary">engineering</mat-icon>
+        <mat-icon class="text-primary">engine</mat-icon>
         <div>
           <p class="spec-label">Engine</p>
-          <p class="spec-value">{{ ad.specs.engine_size || 'N/A' }}</p>
+          <p class="spec-value">{{ ad.specs?.engine_size ?? 'N/A' }}</p>
         </div>
       </div>
 
@@ -38,7 +91,7 @@
         <mat-icon class="text-primary">airline_seat_recline_extra</mat-icon>
         <div>
           <p class="spec-label">Body Type</p>
-          <p class="spec-value">{{ ad.specs.body_type || 'N/A' }}</p>
+          <p class="spec-value">{{ ad.specs?.body_type ?? 'N/A' }}</p>
         </div>
       </div>
     </div>

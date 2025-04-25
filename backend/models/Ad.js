@@ -2,6 +2,10 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   const Ad = sequelize.define('Ad', {
+    images: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,

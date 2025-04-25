@@ -1,6 +1,7 @@
 const { Ad, CarSpec, Tag, Category, User, Review, Message } = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../models');
+const upload = require('../middlewares/upload');
 
 exports.getAllAds = async (req, res) => {
   try {
@@ -242,161 +243,183 @@ exports.searchAds = async (req, res) => {
   }
 };
 
-exports.createAd = async (req, res) => {
-  const transaction = await sequelize.transaction();
-  
-  try {
-    const validationErrors = [];
-    
-    if (!req.body.title?.trim()) {
-      validationErrors.push({
-        field: 'title',
-        message: 'Title is required',
-        value: req.body.title
-      });
-    }
+exports.createAd = [
+  upload.array('images', 5),
+  async (req, res) => {
+    const transaction = await sequelize.transaction();
+    try {
+        console.log('Received body:', req.body);
+      console.log('Received files:', req.files);
+      const imagePaths = req.files?.map(file => `/uploads/${file.filename}`) || [];
 
-    if (!req.body.price || isNaN(req.body.price)) {
-      validationErrors.push({
-        field: 'price',
-        message: 'Valid price is required',
-        value: req.body.price
-      });
-    }
+      const validationErrors = [];
+      
+      if (!req.body.title?.trim()) {
+        validationErrors.push({
+          field: 'title',
+          message: 'Title is required',
+          value: req.body.title
+        });
+      }
 
-    if (!req.body.specs?.brand?.trim()) {
-      validationErrors.push({
-        field: 'specs.brand',
-        message: 'Brand is required',
-        value: req.body.specs?.brand
-      });
-    }
+      if (!req.body.price || isNaN(req.body.price)) {
+        validationErrors.push({
+          field: 'price',
+          message: 'Valid price is required',
+          value: req.body.price
+        });
+      }
 
-    if (!req.body.specs?.model?.trim()) {
-      validationErrors.push({
-        field: 'specs.model',
-        message: 'Model is required',
-        value: req.body.specs?.model
-      });
-    }
+      if (!req.body.specs?.brand?.trim()) {
+        validationErrors.push({
+          field: 'specs.brand',
+          message: 'Brand is required',
+          value: req.body.specs?.brand
+        });
+      }
 
-    if (validationErrors.length > 0) {
-      await transaction.rollback();
-      return res.status(400).json({
-        error: 'Validation failed',
-        failedValidations: validationErrors
-      });
-    }
+      if (!req.body.specs?.model?.trim()) {
+        validationErrors.push({
+          field: 'specs.model',
+          message: 'Model is required',
+          value: req.body.specs?.model
+        });
+      }
 
-    const existingAd = await Ad.findOne({
-      where: {
-        title: req.body.title.trim(),
-        price: parseFloat(req.body.price),
-        description: req.body.description?.trim() || null,
-        seller_id: req.user.userId
-      },
-      transaction
-    });
+      if (imagePaths.length === 0) {
+        validationErrors.push({
+          field: 'images',
+          message: 'At least one image is required',
+          value: null
+        });
+      }
 
-    if (existingAd) {
-      await transaction.rollback();
-      return res.status(409).json({
-        error: 'Duplicate ad content',
-        message: 'You already have an ad with identical details',
-        existingAdId: existingAd.id
-      });
-    }
+      if (validationErrors.length > 0) {
+        await transaction.rollback();
+        return res.status(400).json({
+          error: 'Validation failed',
+          failedValidations: validationErrors
+        });
+      }
 
-    const adData = {
-      title: req.body.title.trim(),
-      price: parseFloat(req.body.price),
-      description: req.body.description?.trim() || null,
-      seller_id: req.user.userId,
-      category_id: req.body.categoryId || 1
-    };
-
-    if (adData.id) delete adData.id;
-
-    const ad = await Ad.create(adData, { transaction });
-
-    await CarSpec.create({
-      brand: req.body.specs.brand.trim(),
-      model: req.body.specs.model.trim(),
-      year: req.body.specs.year ? parseInt(req.body.specs.year) : null,
-      mileage: req.body.specs.mileage ? parseInt(req.body.specs.mileage) : null,
-      fuel_type: req.body.specs.fuel_type || null,
-      transmission: req.body.specs.transmission || null,
-      color: req.body.specs.color || null,
-      doors: req.body.specs.doors ? parseInt(req.body.specs.doors) : null,
-      ad_id: ad.id
-    }, { transaction , ignoreDuplicates: true});
-
-    if (req.body.tags && req.body.tags.length > 0) {
-      const existingTags = await Tag.findAll({
-        where: { id: req.body.tags },
+      const existingAd = await Ad.findOne({
+        where: {
+          title: req.body.title.trim(),
+          price: parseFloat(req.body.price),
+          description: req.body.description?.trim() || null,
+          seller_id: req.user.userId
+        },
         transaction
       });
 
-      if (existingTags.length !== req.body.tags.length) {
+      if (existingAd) {
         await transaction.rollback();
+        return res.status(409).json({
+          error: 'Duplicate ad content',
+          message: 'You already have an ad with identical details',
+          existingAdId: existingAd.id
+        });
+      }
+
+      const adData = {
+        title: req.body.title.trim(),
+        price: parseFloat(req.body.price),
+        description: req.body.description?.trim() || null,
+        seller_id: req.user.userId,
+        category_id: req.body.categoryId || 1,
+        images: imagePaths
+      };
+
+      if (adData.id) delete adData.id;
+
+      const ad = await Ad.create(adData, { transaction });
+
+      await CarSpec.create({
+        brand: req.body.specs.brand.trim(),
+        model: req.body.specs.model.trim(),
+        year: req.body.specs.year ? parseInt(req.body.specs.year) : null,
+        mileage: req.body.specs.mileage ? parseInt(req.body.specs.mileage) : null,
+        fuel_type: req.body.specs.fuel_type || null,
+        transmission: req.body.specs.transmission || null,
+        color: req.body.specs.color || null,
+        doors: req.body.specs.doors ? parseInt(req.body.specs.doors) : null,
+        ad_id: ad.id
+      }, { transaction, ignoreDuplicates: true });
+
+      if (req.body.tags && req.body.tags.length > 0) {
+        const existingTags = await Tag.findAll({
+          where: { id: req.body.tags },
+          transaction
+        });
+
+        if (existingTags.length !== req.body.tags.length) {
+          await transaction.rollback();
+          return res.status(400).json({
+            error: 'Invalid tags',
+            details: 'One or more tags do not exist'
+          });
+        }
+
+        await ad.addTags(req.body.tags, { transaction });
+      }
+
+      await transaction.commit();
+
+      const createdAd = await Ad.findByPk(ad.id, {
+        include: [
+          { model: User, as: 'seller', attributes: ['id', 'username'] },
+          { model: CarSpec, as: 'specs' },
+          { model: Tag, as: 'tags', through: { attributes: [] } }
+        ]
+      });
+
+      return res.status(201).json(createdAd);
+
+    } catch (error) {
+      if (transaction.finished !== 'commit') {
+        await transaction.rollback();
+      }
+
+      if (error instanceof multer.MulterError) {
         return res.status(400).json({
-          error: 'Invalid tags',
-          details: 'One or more tags do not exist'
+          error: 'File upload error',
+          details: error.message
         });
       }
 
-      await ad.addTags(req.body.tags, { transaction });
-    }
+      console.error('Ad creation error:', error);
 
-    await transaction.commit();
-
-    const createdAd = await Ad.findByPk(ad.id, {
-      include: [
-        { model: User, as: 'seller', attributes: ['id', 'username'] },
-        { model: CarSpec, as: 'specs' },
-        { model: Tag, as: 'tags', through: { attributes: [] } }
-      ]
-    });
-
-    return res.status(201).json(createdAd);
-
-  } catch (error) {
-    if (transaction.finished !== 'commit') {
-      await transaction.rollback();
-    }
-
-    console.error('Ad creation error:', error);
-
-    if (error.name === 'SequelizeUniqueConstraintError') {
-      if (error.fields && error.fields.PRIMARY) {
-        return res.status(500).json({
-          error: 'Database error',
-          details: 'Primary key conflict - please try again'
+      if (error.name === 'SequelizeUniqueConstraintError') {
+        if (error.fields && error.fields.PRIMARY) {
+          return res.status(500).json({
+            error: 'Database error',
+            details: 'Primary key conflict - please try again'
+          });
+        }
+        return res.status(409).json({
+          error: 'Duplicate content',
+          details: 'An identical ad already exists'
         });
       }
-      return res.status(409).json({
-        error: 'Duplicate content',
-        details: 'An identical ad already exists'
+
+      if (error.name === 'SequelizeValidationError') {
+        return res.status(400).json({
+          error: 'Validation failed',
+          details: error.errors.map(e => ({
+            field: e.path,
+            message: e.message,
+            value: e.value
+          }))
+        });
+      }
+
+      return res.status(500).json({
+        error: 'Failed to create ad',
+        details: process.env.NODE_ENV === 'development' ? error.message : null
       });
     }
-
-    if (error.name === 'SequelizeValidationError') {
-      return res.status(400).json({
-        error: 'Validation failed',
-        details: error.errors.map(e => ({
-          field: e.path,
-          message: e.message,
-          value: e.value
-        }))
-      });
-    }
-
-    return res.status(500).json({
-      error: 'Failed to create ad',
-      details: process.env.NODE_ENV === 'development' ? error.message : null
-    });
   }
-};
+];
 
 const authorizeAdOwner = async (req, res, next) => {
   try {

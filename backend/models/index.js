@@ -28,6 +28,7 @@ Object.keys(models).forEach(modelName => {
   try {
     await sequelize.authenticate();
     await sequelize.sync({ alter: true });
+    
     console.log('Database connection established successfully');
   } catch (error) {
     console.error('Database connection error:', error);

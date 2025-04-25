@@ -35,7 +35,7 @@ export class RegistrationComponent {
   errorMessage: string | null = null;
 
   registerForm = this.fb.group({
-    name: ['', [Validators.required]],
+    username: ['', [Validators.required]], // Changed from 'name'
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', [Validators.required]]
@@ -51,10 +51,10 @@ export class RegistrationComponent {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      const { name, email, password } = this.registerForm.value;
+      const { username, email, password } = this.registerForm.value;
       
       this.authService.register({ 
-        name: name!, 
+        username: username!, 
         email: email!, 
         password: password! 
       }).subscribe({
