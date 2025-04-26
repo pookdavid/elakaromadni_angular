@@ -7,7 +7,7 @@
   margin: 2rem auto;
 
   .form-title {
-    color: #2d3748;
+    color: #3f51b5;
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
@@ -32,13 +32,36 @@
     border: 2px dashed #cbd5e0;
     border-radius: 8px;
 
-    button[mat-stroked-button] {
-      border-color: #3f51b5;
-      color: #3f51b5;
+    input[type="file"] {
+      display: block;
       margin-bottom: 1rem;
-      
-      mat-icon {
-        margin-right: 0.5rem;
+      padding: 8px 16px;
+      background: #3f51b5;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      font-size: 14px;
+      position: relative;
+
+      &::file-selector-button {
+        display: none;
+      }
+
+      &:hover {
+        background: darken(#3f51b5, 10%);
+      }
+
+      &::before {
+        content: 'Képek feltöltése';
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      &::-webkit-file-upload-button {
+        visibility: hidden;
       }
     }
   }

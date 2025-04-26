@@ -76,12 +76,20 @@
       background-color: white;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       z-index: 10;
-      
+      transition: all 0.3s ease;
+    
+      &:hover {
+        background-color: #f0f0f0;
+        mat-icon {
+          color: rgba(0, 0, 0, 0.6);
+        }
+      }
+    
       &.left-arrow {
         position: absolute;
         left: -1rem;
       }
-      
+    
       &.right-arrow {
         position: absolute;
         right: -1rem;
@@ -144,6 +152,10 @@
     margin-bottom: 2rem;
     font-size: 2rem;
   }
+  .category-btn{
+    border-style: none;
+    background-color: white;
+  }
 
   .main-content{
     width: 100%;
@@ -163,6 +175,7 @@
       text-align: center;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       transition: transform 0.3s;
+      
       
       &:hover {
         transform: translateY(-5px);
@@ -238,6 +251,7 @@
   background-color: #3f51b5;
   color: white;
   padding: 3rem 5% 1rem;
+  
   
   .footer-content {
     display: grid;

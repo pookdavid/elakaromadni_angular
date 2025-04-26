@@ -34,13 +34,49 @@ export class HomeComponent {
       model: 'Corolla', 
       year: 2020, 
       mileage: 45000,
-      price: 18500, 
+      price: 1850000, 
       image: '/car1.jpg' 
-    }
+    },{ 
+      id: 2, 
+      make: 'Honda', 
+      model: 'Civic', 
+      year: 2018, 
+      mileage: 137000,
+      price: 2750000, 
+      image: '/car2.jpg' 
+    },{ 
+      id: 3, 
+      make: 'BWM', 
+      model: '340i', 
+      year: 2017, 
+      mileage: 88000,
+      price: 5550000, 
+      image: '/car3.jpg' 
+    },{ 
+      id: 4, 
+      make: 'Audi', 
+      model: 'A4', 
+      year: 2019, 
+      mileage: 54000,
+      price: 14780000, 
+      image: '/car4.jpg' 
+    },{ 
+      id: 5, 
+      make: 'Mercedes-Benz', 
+      model: 'C300', 
+      year: 2017, 
+      mileage: 179000,
+      price: 14700000, 
+      image: '/car5.jpg' 
+    },
   ];
 
   categories = [
-    { name: 'Sedans', icon: 'directions_car' }
+    { name: 'Sedan', icon: 'directions_car' },
+    { name: 'Kombi', icon: 'directions_car' },
+    { name: 'Hatchback', icon: 'directions_car' },
+    { name: 'Coupe', icon: 'directions_car' },
+    { name: 'Cabrio', icon: 'directions_car' },
   ];
 
   scrollCarList(direction: number): void {

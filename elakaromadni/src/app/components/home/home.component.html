@@ -48,8 +48,10 @@
     <h2>Keresés kategória szerint</h2>
     <div class="category-grid">
       <div class="category-card" *ngFor="let category of categories">
-        <mat-icon>{{category.icon}}</mat-icon>
-        <h3>{{category.name}}</h3>
+        <button class="category-btn">
+          <mat-icon>{{category.icon}}</mat-icon>
+          <h3>{{category.name}}</h3>
+        </button>
       </div>
     </div>
   </section>
@@ -79,19 +81,19 @@
     <mat-icon>add</mat-icon>
 
   </button><app-message-bubble></app-message-bubble>
-
+</div>
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-section">
-        <h3>CarMarket</h3>
-        <p>Your trusted car marketplace since 2023</p>
+        <h3>Elakaromadni.hu</h3>
+        <p>Magyarország legmegbízottabb autókereskedő weboldala 2024-óta!</p>
       </div>
       
       <div class="footer-section">
         <h3>Gyors elérés</h3>
-        <a routerLink="/">Home</a>
-        <a routerLink="/ads">All Listings</a>
-        <a routerLink="/add-ad">Sell Your Car</a>
+        <a routerLink="/">Főoldal</a>
+        <a routerLink="/ads">Összes hirdetés</a>
+        <a routerLink="/add-ad">Hirdetés feladása</a>
       </div>
       
       <div class="footer-section">
@@ -107,7 +109,7 @@
         <h3>Kövess minket</h3>
         <div class="social-icons">
           <a href="#"><mat-icon>facebook</mat-icon></a>
-          <a href="#"><mat-icon>instagram</mat-icon></a>
+          <a href="#"><mat-icon>youtube</mat-icon></a>
           <a href="#"><mat-icon>twitter</mat-icon></a>
         </div>
       </div>
@@ -119,4 +121,3 @@
       <p>© 2023 Elakaromadni.hu Minden jog fenntartva.</p>
     </div>
   </footer>
-</div>

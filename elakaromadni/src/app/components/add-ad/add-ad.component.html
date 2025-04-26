@@ -43,11 +43,7 @@
     </div>
 
     <div class="image-upload-section">
-      <input type="file" multiple #fileInput hidden (change)="onFileSelect($event)">
-      <button type="button" mat-stroked-button (click)="fileInput.click()">
-        <mat-icon>upload</mat-icon>
-        Képek feltöltése
-      </button>
+      <input type="file" multiple #fileInput (change)="onFileSelect($event)">
       
       <div class="image-previews">
         <div class="image-preview" *ngFor="let preview of imagePreviews; let i = index">

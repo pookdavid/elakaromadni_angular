@@ -7,8 +7,8 @@
     
     <nav>
       <ng-container *ngIf="authService.isLoggedIn(); else notLoggedIn">
-        <a mat-button routerLink="/ads">Browse Cars</a>
-        <a mat-button routerLink="/add-ad">Sell Your Car</a>
+        <a mat-button routerLink="/ads">Hirdetések</a>
+        <a mat-button routerLink="/add-ad">Hirdetés feladása</a>
         <button mat-icon-button [matMenuTriggerFor]="menu">
           <mat-icon>account_circle</mat-icon>
         </button>
